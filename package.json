@@ -1,0 +1,25 @@
+{
+  "name": "employee-tracker-cms",
+  "version": "1.0.0",
+  "description": "MySQL Command Line Interface (CLI) application for tracking company and employee data through a Content Management System (CMS)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CrainDavis/EmployeeTrackerCMS.git"
+  },
+  "author": "Chyna Davis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CrainDavis/EmployeeTrackerCMS/issues"
+  },
+  "homepage": "https://github.com/CrainDavis/EmployeeTrackerCMS#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.1.0",
+    "mysql": "^2.18.1"
+  }
+}
