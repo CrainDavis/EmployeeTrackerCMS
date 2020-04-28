@@ -4,7 +4,19 @@
 ---
 
 ## Description:
-This is a MySQL Command Line Interface (CLI) application for tracking company and employee data through a Content Management System (CMS).
+This is a Command Line Interface (CLI) application that allows the user to search through a company's database for *department*, *role*, and *employee* information. This database uses MySQL to hold, create, and delete information.
+  * the *department* table stores information for the department's name.
+  * the *role* table stores information for the job title and salary, as well as which department it falls under.
+  * the *employee* table stores information for the employee's first and last names, as well as what their job title is and who their manager is (if they have one).
+
+This Employee Tracking Content Management System (CMS) can be used to do the following:
+  * add departments, roles, or employees
+  * view departments, roles, or employees
+  * delete a department, role, or employee
+  * update an employee's role
+  * update an employee's manager
+  * view all employees under a particular manager
+  * view the total utilized budget of a department
 
 ---
 
@@ -21,10 +33,27 @@ This is a MySQL Command Line Interface (CLI) application for tracking company an
 ---
 
 ## Installation:
+__step 1:__ clone this repository to your local device using the following command:
+```
+git clone https://github.com/CrainDavis/EmployeeTrackerCMS.git
+```
+
+__step 2:__ install the necessary packages by invoking the following command in the terminal/git bash:
+```
+npm install
+```
+
+* *note:* This application requires the user to have [MySQL](https://dev.mysql.com/downloads/windows/installer/8.0.html) and [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) installed on their local device. In addition, the user must also enter their root password in the appropriate field of the `server.js` file.
 
 ---
 
 ## Usage:
+__step 1:__ open the application in the terminal/git bash and invoke it with the following command:
+```
+node server.js
+```
+
+__step 2:__ use the application to do whatever you want!
 
 ---
 
