@@ -187,6 +187,15 @@ https://www.contributor-covenant.org/translations.
 ---
 
 ## Resources:
+* [npm packages:](https://www.npmjs.com/)
+    * [MySQL](https://www.npmjs.com/package/mysql)
+    * [Inquirer.js](https://www.npmjs.com/package/inquirer)
+    * [console.table](https://www.npmjs.com/package/console.table)
+* coding assistance:
+* [MySQL](https://dev.mysql.com/downloads/windows/installer/8.0.html) & [MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
+    * [MySQL Joins](https://www.w3schools.com/sql/sql_join.asp)
+    * [inquirer validation](https://github.com/sameeri/Code-Inquirer/wiki/Asking-questions-away-with-Inquirer!)
+* [Random Name Generator](http://random-name-generator.info/index.php?n=50&g=1&st=2)
 
 ---
 
