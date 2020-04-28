@@ -85,6 +85,61 @@ function mainAction() {
 // GET ALL DEPARTMENTS, ROLES, EMPLOYEES, & MANAGERS --> array
 // =======================================================================================
 
+var getFunctions = {
+    getDepartments: function (cb) {
+        connection.query("SELECT department FROM departments", function (err, res) {
+            var departmentsArray = [];
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                departmentsArray.push(res[i].department);
+            };
+            // console.log(departmentsArray);
+            cb(departmentsArray);
+        });
+    },
+
+    getRoles: function (cb) {
+        connection.query("SELECT title FROM roles", function (err, res) {
+            var rolesArray = [];
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                rolesArray.push(res[i].title);
+            };
+            // console.log(rolesArray);
+            cb(rolesArray);
+        });
+    },
+
+    getEmployees: function (cb) {
+        connection.query(`SELECT CONCAT (employees.first_name, ' ', employees.last_name) AS full_names FROM employees`, function (err, res) {
+            var employeesArray = [];
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                employeesArray.push(res[i].full_names);
+            };
+            // console.log(employeesArray);
+            cb(employeesArray);
+        });
+    },
+
+    getManagers: function (cb) {
+        connection.query(`
+        SELECT CONCAT (employees.first_name, ' ', employees.last_name) AS manager_names
+        FROM employees
+        JOIN roles ON employees.role_id = roles.id
+        WHERE (roles.title = "Chief Executive Officer") OR (roles.title = "Chief of Finance") OR (roles.title = "Chief of Distribution") OR (roles.title = "Chief of Production") OR (roles.title = "Chief of Retail") OR (roles.title = "Head of Employment") OR (roles.title = "Distribution Director") OR (roles.title = "Head of Production") OR (roles.title = "Store Director")
+        ORDER BY employees.id ASC`, function (err, res) {
+            var managerNamesArray = [];
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                managerNamesArray.push(res[i].manager_names);
+            }
+            // console.log(managerNamesArray);
+            cb(managerNamesArray);
+        })
+    }
+};
+
 // =======================================================================================
 // VALIDATE USER INPUT (for appropriate string length or use of numbers)
 // =======================================================================================
@@ -93,15 +148,45 @@ function mainAction() {
 // FUNCTIONS FOR ALL ACTIONS
 // =======================================================================================
 
-function viewAllDepartments() {};
+function viewAllDepartments() {
+    connection.query(`SELECT * FROM departments`, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        console.log("-----------------------");
+        mainAction();
+    })
+};
 
 // ---------------------------------------------------------------------------------------
 
-function viewAllRoles() {};
+function viewAllRoles() {
+    connection.query(`
+    SELECT roles.id, roles.title, roles.salary, departments.department
+    FROM roles
+    INNER JOIN departments ON roles.department_id = departments.id`, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        console.log("-----------------------");
+        mainAction();
+    })
+};
 
 // ---------------------------------------------------------------------------------------
 
-function viewAllEmployees() {};
+function viewAllEmployees() {
+    connection.query(`
+    SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary,
+    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    FROM employees AS manager
+    RIGHT JOIN employees ON manager.id = employees.manager_id
+    LEFT JOIN roles ON employees.role_id = roles.id
+    LEFT JOIN departments ON roles.department_id = departments.id;`, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        console.log("-----------------------");
+        mainAction();
+    })
+};
 
 // ---------------------------------------------------------------------------------------
 
