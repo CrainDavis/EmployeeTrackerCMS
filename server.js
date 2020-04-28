@@ -144,6 +144,18 @@ var getFunctions = {
 // VALIDATE USER INPUT (for appropriate string length or use of numbers)
 // =======================================================================================
 
+function validateInput(input) {
+    if (input.length > 30 || input.length < 1) {
+        return "input must be between 1 and 30 characters";
+    }
+    return true;
+};
+
+function validateNumber(number) {
+    var reg = /^\d+$/;
+    return reg.test(number) || "enter a NUMBER"
+};
+
 // =======================================================================================
 // FUNCTIONS FOR ALL ACTIONS
 // =======================================================================================
@@ -190,15 +202,123 @@ function viewAllEmployees() {
 
 // ---------------------------------------------------------------------------------------
 
-function addDepartment() {};
+function addDepartment() {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "enter the NAME of the DEPARTMENT to be added",
+            validate: validateInput
+        }
+    ]).then(function (answer) {
+        connection.query("INSERT INTO departments SET ?",
+            {
+                department: answer.name
+            },
+            function (err, res) {
+                if (err) throw err;
+                console.log(res.affectedRows + " department added");
+                console.log("-----------------------");
+                mainAction();
+            });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
-function addRole() {};
+function addRole() {
+    getFunctions.getDepartments(function (result) {
+        var departmentNames = result;
+        inquirer.prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "enter the ROLE to be added",
+                validate: validateInput
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "enter the SALARY of the new ROLE",
+                validate: validateNumber
+            },
+            {
+                name: "department",
+                type: "list",
+                message: "select which DEPARTMENT the new role is in",
+                choices: departmentNames
+            }
+        ]).then(function (answers) {
+            connection.query("SELECT id FROM departments WHERE ?",
+                { department: answers.department },
+                function (err, departments) {
+                    if (err) throw err;
+                    connection.query(`
+                    INSERT INTO roles (title, salary, department_id) 
+                    VALUES ("${answers.title}", "${answers.salary}", "${departments[0].id}")`,
+                        function (err1, res1) {
+                            if (err1) throw err1;
+                            console.log(res1.affectedRows + " role added");
+                            console.log("-----------------------");
+                            mainAction();
+                        });
+                });
+        });
+    })
+};
 
 // ---------------------------------------------------------------------------------------
 
-function addEmployee() {};
+function addEmployee() {
+    getFunctions.getRoles(function(result) {
+        var rolesList = result;
+        getFunctions.getManagers(function(result) {
+            var managersList = result;
+            inquirer.prompt([
+                {
+                    name: "firstName",
+                    type: "input",
+                    message: "enter the new employee's FIRST NAME",
+                    validate: validateInput
+                },
+                {
+                    name: "lastName",
+                    type: "input",
+                    message: "enter the new employee's LAST NAME",
+                    validate: validateInput
+                },
+                {
+                    name: "role",
+                    type: "list",
+                    message: "select the new employee's ROLE",
+                    choices: rolesList
+                },
+                {
+                    name: "manager",
+                    type: "list",
+                    message: "select the new employee's MANAGER",
+                    choices: managersList
+                }
+            ]).then(function(answers) {
+                connection.query("SELECT id FROM roles WHERE ?", { title: answers.role }, function(err, roleId) {
+                    if (err) throw err;
+                    var managerFirstName = answers.manager.split(' ').slice(0, -1).join(' ');
+                    var managerLastName = answers.manager.split(' ').slice(-1).join(' ');
+                    connection.query("SELECT id FROM employees WHERE ? AND ?", [{ first_name: managerFirstName }, { last_name: managerLastName }], function(err, managerId) {
+                        if (err) throw err;
+                        connection.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) 
+                        VALUES ("${answers.firstName}", "${answers.lastName}", ${roleId[0].id}, ${managerId[0].id})`, function(err, res) {
+                            if (err) throw err;
+                            console.log(answers.firstName + " " + answers.lastName + " officially works at this company!");
+                            console.log("-----------------------");
+                            mainAction();
+                        });
+                    });
+                });
+            });
+        });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
