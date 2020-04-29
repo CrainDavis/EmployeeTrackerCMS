@@ -4,10 +4,10 @@
 ---
 
 ## Description:
-This is a Command Line Interface (CLI) application that allows the user to search through a company's database for *department*, *role*, and *employee* information. This database uses MySQL to hold, create, and delete information.
-  * the *department* table stores information for the department's name.
-  * the *role* table stores information for the job title and salary, as well as which department it falls under.
-  * the *employee* table stores information for the employee's first and last names, as well as what their job title is and who their manager is (if they have one).
+This is a Command Line Interface (CLI) application that allows the user to search through a company's database for __*department*__, __*role*__, and __*employee*__ information. This database uses MySQL to hold, create, and delete information.
+  * the __*department*__ table stores information for the department's name.
+  * the __*role*__ table stores information for the job title and salary, as well as which department it falls under.
+  * the __*employee*__ table stores information for the employee's first and last names, as well as what their job title is and who their manager is (if they have one).
 
 This Employee Tracking Content Management System (CMS) can be used to do the following:
   * add departments, roles, or employees
@@ -44,6 +44,10 @@ npm install
 ```
 
 * *note:* This application requires the user to have [MySQL](https://dev.mysql.com/downloads/windows/installer/8.0.html) and [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) installed on their local device. In addition, the user must also enter their root password in the appropriate field of the `server.js` file.
+
+__step 3:__ enter your MySQL password on Line15 of the `server.js` file
+
+![location of MySQL password](/assets/password-location.png)
 
 ---
 
