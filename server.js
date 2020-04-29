@@ -127,7 +127,11 @@ var getFunctions = {
         SELECT CONCAT (employees.first_name, ' ', employees.last_name) AS manager_names
         FROM employees
         JOIN roles ON employees.role_id = roles.id
-        WHERE (roles.title = "Chief Executive Officer") OR (roles.title = "Chief of Finance") OR (roles.title = "Chief of Distribution") OR (roles.title = "Chief of Production") OR (roles.title = "Chief of Retail") OR (roles.title = "Head of Employment") OR (roles.title = "Distribution Director") OR (roles.title = "Head of Production") OR (roles.title = "Store Director")
+        WHERE (roles.title = "Chief Executive Officer") OR (roles.title = "Chief of Finance") OR 
+        (roles.title = "Chief of Distribution") OR (roles.title = "Chief of Production") OR 
+        (roles.title = "Chief of Retail") OR (roles.title = "Head of Employment") OR 
+        (roles.title = "Distribution Director") OR (roles.title = "Head of Production") OR 
+        (roles.title = "Store Director")
         ORDER BY employees.id ASC`, function (err, res) {
             var managerNamesArray = [];
             if (err) throw err;
@@ -217,7 +221,7 @@ function addDepartment() {
             },
             function (err, res) {
                 if (err) throw err;
-                console.log(res.affectedRows + " department added");
+                console.log(answer.name + " Department added");
                 console.log("-----------------------");
                 mainAction();
             });
@@ -258,7 +262,7 @@ function addRole() {
                     VALUES ("${answers.title}", "${answers.salary}", "${departments[0].id}")`,
                         function (err1, res1) {
                             if (err1) throw err1;
-                            console.log(res1.affectedRows + " role added");
+                            console.log("the role of " + answers.title + " with a salary of " + answers.salary + " added to the " + answers.department + " Department");
                             console.log("-----------------------");
                             mainAction();
                         });
@@ -445,7 +449,7 @@ function deleteDepartment() {
         ]).then(function(answers) {
             connection.query("DELETE FROM departments WHERE ?", {department:answers.departmentName}, function(err, res) {
                 if (err) throw err;
-                console.log("the " + answers.departmentName + " department has been removed");
+                console.log("the " + answers.departmentName + " Department has been removed");
                 console.log("-----------------------");
                 mainAction();
             });
