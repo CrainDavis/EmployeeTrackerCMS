@@ -4,14 +4,14 @@ CREATE DATABASE employeeTrackerDB;
 
 USE employeeTrackerDB;
 
-CREATE TABLE departments(
+CREATE TABLE department(
 	id INT NOT NULL AUTO_INCREMENT,
-	department VARCHAR(30) NOT NULL,
+	name VARCHAR(30) NOT NULL,
     
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE roles(
+CREATE TABLE role(
 	id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL NOT NULL,
@@ -19,10 +19,10 @@ CREATE TABLE roles(
     
 	PRIMARY KEY (id),
     
-    FOREIGN KEY(department_id) REFERENCES departments(id)
+    FOREIGN KEY(department_id) REFERENCES department(id)
 );
 
-CREATE TABLE employees(
+CREATE TABLE employee(
 	id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
@@ -31,14 +31,14 @@ CREATE TABLE employees(
     
     PRIMARY KEY (id),
     
-    FOREIGN KEY(role_id) REFERENCES roles(id),
-    FOREIGN KEY(manager_id) REFERENCES employees(id)
+    FOREIGN KEY(role_id) REFERENCES role(id),
+    FOREIGN KEY(manager_id) REFERENCES employee(id)
 );
 
 -- ==============================================================================
 
 -- create the departments
-INSERT INTO departments (department) VALUES 
+INSERT INTO department (name) VALUES 
 ("Administration"), 
 ("Employee Resources"), 
 ("Distribution"), 
@@ -46,7 +46,7 @@ INSERT INTO departments (department) VALUES
 ("Store Operations");
 
 -- create the roles in each department
-INSERT INTO roles (title, salary, department_id) VALUES 
+INSERT INTO role (title, salary, department_id) VALUES 
 ("Chief Executive Officer", 1000000, 1), -- 1
 
 ("Chief of Finance", 700000, 1), -- 1
@@ -70,11 +70,11 @@ INSERT INTO roles (title, salary, department_id) VALUES
 ("Customer Service Rep", 32000, 5); -- 6
 
 -- create the CEO (has no manager)
-INSERT INTO employees (first_name, last_name, role_id) VALUES 
+INSERT INTO employee (first_name, last_name, role_id) VALUES 
 ("Andrew", "Buchanan", 1);
 
 -- create the other employees (all have a manager)
-INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES 
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES 
 ("Ora", "Evans", 2, 1), -- 2
 ("Jill", "Vega", 3, 1), -- 3
 ("Luther", "Carr", 4, 1), -- 4
@@ -123,23 +123,23 @@ INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES
 
 -- ==============================================================================
 
-SELECT * FROM departments;
+SELECT * FROM department;
 
-SELECT * FROM roles;
+SELECT * FROM role;
 
-SELECT * FROM employees;
-
--- ==============================================================================
-
-SELECT roles.id, roles.title, roles.salary, departments.department 
-FROM roles
-INNER JOIN departments ON roles.department_id = departments.id;
+SELECT * FROM employee;
 
 -- ==============================================================================
 
-SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, 
+SELECT role.id, role.title, role.salary, department.name 
+FROM role
+INNER JOIN department ON role.department_id = department.id;
+
+-- ==============================================================================
+
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, 
 CONCAT(mgr.first_name, ' ', mgr.last_name) AS manager
-FROM employees AS mgr
-RIGHT JOIN employees ON mgr.id = employees.manager_id
-LEFT JOIN roles ON employees.role_id = roles.id
-LEFT JOIN departments ON roles.department_id = departments.id;
+FROM employee AS mgr
+RIGHT JOIN employee ON mgr.id = employee.manager_id
+LEFT JOIN role ON employee.role_id = role.id
+LEFT JOIN department ON role.department_id = department.id;
