@@ -86,7 +86,7 @@ function mainAction() {
 // =======================================================================================
 
 var getFunctions = {
-    getDepartments: function (cb) {
+    getDepartments: function (arr) {
         connection.query("SELECT department FROM departments", function (err, res) {
             var departmentsArray = [];
             if (err) throw err;
@@ -94,11 +94,11 @@ var getFunctions = {
                 departmentsArray.push(res[i].department);
             };
             // console.log(departmentsArray);
-            cb(departmentsArray);
+            arr(departmentsArray);
         });
     },
 
-    getRoles: function (cb) {
+    getRoles: function (arr) {
         connection.query("SELECT title FROM roles", function (err, res) {
             var rolesArray = [];
             if (err) throw err;
@@ -106,11 +106,11 @@ var getFunctions = {
                 rolesArray.push(res[i].title);
             };
             // console.log(rolesArray);
-            cb(rolesArray);
+            arr(rolesArray);
         });
     },
 
-    getEmployees: function (cb) {
+    getEmployees: function (arr) {
         connection.query(`SELECT CONCAT (employees.first_name, ' ', employees.last_name) AS full_names FROM employees`, function (err, res) {
             var employeesArray = [];
             if (err) throw err;
@@ -118,11 +118,11 @@ var getFunctions = {
                 employeesArray.push(res[i].full_names);
             };
             // console.log(employeesArray);
-            cb(employeesArray);
+            arr(employeesArray);
         });
     },
 
-    getManagers: function (cb) {
+    getManagers: function (arr) {
         connection.query(`
         SELECT CONCAT (employees.first_name, ' ', employees.last_name) AS manager_names
         FROM employees
@@ -139,7 +139,7 @@ var getFunctions = {
                 managerNamesArray.push(res[i].manager_names);
             }
             // console.log(managerNamesArray);
-            cb(managerNamesArray);
+            arr(managerNamesArray);
         })
     }
 };
@@ -403,13 +403,13 @@ function updateEmployeeManager() {
 // ---------------------------------------------------------------------------------------
 
 var viewRelation = {
-    managersSubordinates: function(manager_name, cb) {
+    managersSubordinates: function(manager_name, arr) {
         connection.query(`
         SELECT CONCAT(first_name, ' ', last_name) AS managersSubordinates 
         FROM employees WHERE manager_id 
         IN (SELECT id FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?)`, manager_name, function(err, res) {
             if (err) throw err;
-            cb(res);
+            arr(res);
         });
     }
 }; 
