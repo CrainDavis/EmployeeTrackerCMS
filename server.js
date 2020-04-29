@@ -322,28 +322,207 @@ function addEmployee() {
 
 // ---------------------------------------------------------------------------------------
 
-function updateEmployeeRole() {};
+function updateEmployeeRole() {
+    getFunctions.getEmployees(function(result) {
+        var employeesList = result;
+        getFunctions.getRoles(function(result) {
+            var rolesList = result;
+            inquirer.prompt([
+                {
+                    name: "name",
+                    type: "list",
+                    message: "select EMPLOYEE to change role of",
+                    choices: employeesList
+                },
+                {
+                    name: "title",
+                    type: "list",
+                    message: "select the employee's NEW ROLE",
+                    choices: rolesList
+                }
+            ]).then(function(answers) {
+                var firstName = answers.name.split(' ').slice(0, -1).join(' ');
+                var lastName = answers.name.split(' ').slice(-1).join(' ');
+                connection.query("SELECT id FROM roles WHERE ?", {title:answers.title}, function(err, res) {
+                    if (err) throw err;
+                    connection.query("UPDATE employees SET ? WHERE ? AND ?", [{role_id:res[0].id}, {first_name:firstName}, {last_name:lastName}], function(err, res) {
+                        if (err) throw err;
+                        console.log(answers.name + "'s record successfully updated");
+                        console.log("-----------------------");
+                        mainAction();
+                    });
+                });
+            });
+        });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
-function updateEmployeeManager() {};
+function updateEmployeeManager() {
+    getFunctions.getEmployees(function(result) {
+        var employeesList = result;
+        getFunctions.getManagers(function(result) {
+            var managersList = result;
+            inquirer.prompt([
+                {
+                    name: "employee",
+                    type: "list",
+                    message: "select EMPLOYEE that is changing managers",
+                    choices: employeesList
+                },
+                {
+                    name: "manager",
+                    type: "list",
+                    message: "select the employee's NEW MANAGER",
+                    choices: managersList
+                }
+            ]).then(function(answers) {
+                var managerFirstName = answers.manager.split(' ').slice(0, -1).join(' ');
+                var managerLastName = answers.manager.split(' ').slice(-1).join(' ');
+                var employeeFirstName = answers.employee.split(' ').slice(0, -1).join(' ');
+                var employeeLastName = answers.employee.split(' ').slice(-1).join(' ');
+                connection.query("SELECT id FROM employees WHERE ? AND ?", [{first_name:managerFirstName}, {last_name:managerLastName}], function(err, res) {
+                    if (err) throw err;
+                    connection.query("UPDATE employees SET ? WHERE ? AND ?", [{manager_id:res[0].id}, {first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
+                        if (err) throw err;
+                        console.log(employeeFirstName + " " + employeeLastName + "'s record has been updated");
+                        console.log("-----------------------");
+                        mainAction();
+                    });
+                });
+            });
+        });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
-function viewEmployeesByManager() {};
+var viewRelation = {
+    managersSubordinates: function(manager_name, cb) {
+        connection.query(`
+        SELECT CONCAT(first_name, ' ', last_name) AS managersSubordinates 
+        FROM employees WHERE manager_id 
+        IN (SELECT id FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?)`, manager_name, function(err, res) {
+            if (err) throw err;
+            cb(res);
+        });
+    }
+}; 
+
+function viewEmployeesByManager() {
+    getFunctions.getManagers(function(result) {
+        var managersList = result;
+        inquirer.prompt([
+            {
+                name: "manager",
+                type: "list",
+                message: "select a MANAGER to view employees working under them",
+                choices: managersList
+            }
+        ]).then(function(answers) {
+            viewRelation.managersSubordinates(answers.manager, function(result) {
+                console.table(result);
+                console.log("-----------------------");
+                mainAction();
+            });
+        });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
-function deleteDepartment() {};
+function deleteDepartment() {
+    getFunctions.getDepartments(function(result) {
+        var departmentsList = result;
+        inquirer.prompt([
+            {
+                name: "departmentName",
+                type: "list",
+                message: "select DEPARTMENT to remove",
+                choices: departmentsList
+            }
+        ]).then(function(answers) {
+            connection.query("DELETE FROM departments WHERE ?", {department:answers.departmentName}, function(err, res) {
+                if (err) throw err;
+                console.log("the " + answers.departmentName + " department has been removed");
+                console.log("-----------------------");
+                mainAction();
+            });
+        });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
-function deleteRole() {};
+function deleteRole() {
+    getFunctions.getRoles(function(result) {
+        var rolesList = result;
+        inquirer.prompt([
+            {
+                name: "roleTitle",
+                type: "list",
+                message: "select ROLE to remove",
+                choices: rolesList
+            }
+        ]).then(function(answers) {
+            connection.query("DELETE FROM roles WHERE ?", {title:answers.roleTitle}, function(err, res) {
+                if (err) throw err;
+                console.log("the role of " + answers.roleTitle + " no longer exists at this company");
+                console.log("-----------------------");
+                mainAction();
+            })
+        })
+    })
+};
 
 // ---------------------------------------------------------------------------------------
 
-function deleteEmployee() {};
+function deleteEmployee() {
+    getFunctions.getEmployees(function(result) {
+        var employeesList = result;
+        inquirer.prompt([
+            {
+                name: "employeeName",
+                type: "list",
+                message: "select EMPLOYEE to remove",
+                choices: employeesList
+            }
+        ]).then(function(answers) {
+            var employeeFirstName = answers.employeeName.split(' ').slice(0, -1).join(' ');
+            var employeeLastName = answers.employeeName.split(' ').slice(-1).join(' ');
+            connection.query("DELETE FROM employees WHERE ? AND ?", [{first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
+                if (err) throw err;
+                console.log(employeeFirstName + " " + employeeLastName + " has been removed");
+                console.log("-----------------------");
+                mainAction();
+            });
+        });
+    });
+};
 
 // ---------------------------------------------------------------------------------------
 
-function viewDepartmentBudget() {};
+function viewDepartmentBudget() {
+    getFunctions.getDepartments(function(result) {
+        var departmentsList = result;
+        inquirer.prompt([
+            {
+                name: "depName",
+                type: "list",
+                message: "select DEPARTMENT to view budget",
+                choices: departmentsList
+            }
+        ]).then(function(answers) {
+            connection.query(`
+            SELECT department, SUM(salary) AS 'utilized_budget'
+            FROM employees, roles, departments
+            WHERE employees.role_id = roles.id AND roles.department_id = departments.id AND departments.department = ?`, answers.depName, function(err, res) {
+                if (err) throw err;
+                console.table(res);
+                console.log("-----------------------");
+                mainAction();
+            });
+        });
+    });
+};
