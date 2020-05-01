@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "r00tPa$$",
+    password: "",
     database: "employeeTrackerDB"
 });
 
@@ -313,7 +313,7 @@ function addEmployee() {
                         connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) 
                         VALUES ("${answers.firstName}", "${answers.lastName}", ${roleId[0].id}, ${managerId[0].id})`, function(err, res) {
                             if (err) throw err;
-                            console.log(answers.firstName + " " + answers.lastName + " officially works at this company!");
+                            console.log(answers.firstName + " " + answers.lastName + " officially works at this company");
                             console.log("-----------------------");
                             mainAction();
                         });
