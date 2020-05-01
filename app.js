@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "r00tPa$$",
     database: "employeeTrackerDB"
 });
 
@@ -221,7 +221,7 @@ function addDepartment() {
             },
             function (err, res) {
                 if (err) throw err;
-                console.log(answer.name + " Department added");
+                console.log("the " + answer.name + " Department has been added");
                 console.log("----------------------------------------------");
                 mainAction();
             });
@@ -262,7 +262,7 @@ function addRole() {
                     VALUES ("${answers.title}", "${answers.salary}", "${department[0].id}")`,
                         function (err1, res1) {
                             if (err1) throw err1;
-                            console.log("the role of " + answers.title + " with a salary of " + answers.salary + " added to the " + answers.department + " Department");
+                            console.log("the role of " + answers.title + " with a salary of $" + answers.salary + " has been added to the " + answers.department + " Department");
                             console.log("----------------------------------------------");
                             mainAction();
                         });
@@ -313,7 +313,7 @@ function addEmployee() {
                         connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) 
                         VALUES ("${answers.firstName}", "${answers.lastName}", ${roleId[0].id}, ${managerId[0].id})`, function(err, res) {
                             if (err) throw err;
-                            console.log(answers.firstName + " " + answers.lastName + " officially works at this company");
+                            console.log(answers.firstName + " " + answers.lastName + " officially works as a(n) " + answers.role);
                             console.log("----------------------------------------------");
                             mainAction();
                         });
@@ -351,7 +351,7 @@ function updateEmployeeRole() {
                     if (err) throw err;
                     connection.query("UPDATE employee SET ? WHERE ? AND ?", [{role_id:res[0].id}, {first_name:firstName}, {last_name:lastName}], function(err, res) {
                         if (err) throw err;
-                        console.log(answers.name + "'s record successfully updated");
+                        console.log(answers.name + "'s role successfully updated to " + answers.title);
                         console.log("----------------------------------------------");
                         mainAction();
                     });
@@ -390,7 +390,7 @@ function updateEmployeeManager() {
                     if (err) throw err;
                     connection.query("UPDATE employee SET ? WHERE ? AND ?", [{manager_id:res[0].id}, {first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
                         if (err) throw err;
-                        console.log(employeeFirstName + " " + employeeLastName + "'s record has been updated");
+                        console.log(answers.employee + "'s manager has been updated to " + answers.manager);
                         console.log("----------------------------------------------");
                         mainAction();
                     });
@@ -405,7 +405,7 @@ function updateEmployeeManager() {
 var viewRelation = {
     managersSubordinates: function(manager_name, arr) {
         connection.query(`
-        SELECT CONCAT(first_name, ' ', last_name) AS managersSubordinates 
+        SELECT CONCAT(first_name, ' ', last_name) AS subordinates 
         FROM employee WHERE manager_id 
         IN (SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?)`, manager_name, function(err, res) {
             if (err) throw err;
@@ -426,6 +426,7 @@ function viewEmployeesByManager() {
             }
         ]).then(function(answers) {
             viewRelation.managersSubordinates(answers.manager, function(result) {
+                console.log("all employees working under " + answers.manager + ":\n");
                 console.table(result);
                 console.log("----------------------------------------------");
                 mainAction();
@@ -472,7 +473,7 @@ function deleteRole() {
         ]).then(function(answers) {
             connection.query("DELETE FROM role WHERE ?", {title:answers.roleTitle}, function(err, res) {
                 if (err) throw err;
-                console.log("the role of " + answers.roleTitle + " no longer exists at this company");
+                console.log("the role of " + answers.roleTitle + " has been removed");
                 console.log("----------------------------------------------");
                 mainAction();
             })
@@ -497,7 +498,7 @@ function deleteEmployee() {
             var employeeLastName = answers.employeeName.split(' ').slice(-1).join(' ');
             connection.query("DELETE FROM employee WHERE ? AND ?", [{first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
                 if (err) throw err;
-                console.log(employeeFirstName + " " + employeeLastName + " has been removed");
+                console.log(answers.employeeName + " has been removed");
                 console.log("----------------------------------------------");
                 mainAction();
             });
