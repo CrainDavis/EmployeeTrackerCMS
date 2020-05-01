@@ -2,10 +2,10 @@
   "name": "employee-tracker-cms",
   "version": "1.0.0",
   "description": "MySQL Command Line Interface (CLI) application for tracking company and employee data through a Content Management System (CMS)",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",

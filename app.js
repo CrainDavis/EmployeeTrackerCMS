@@ -168,7 +168,7 @@ function viewAllDepartments() {
     connection.query(`SELECT * FROM department`, function (err, res) {
         if (err) throw err;
         console.table(res);
-        console.log("-----------------------");
+        console.log("----------------------------------------------");
         mainAction();
     })
 };
@@ -182,7 +182,7 @@ function viewAllRoles() {
     INNER JOIN department ON role.department_id = department.id`, function (err, res) {
         if (err) throw err;
         console.table(res);
-        console.log("-----------------------");
+        console.log("----------------------------------------------");
         mainAction();
     })
 };
@@ -199,7 +199,7 @@ function viewAllEmployees() {
     LEFT JOIN department ON role.department_id = department.id;`, function (err, res) {
         if (err) throw err;
         console.table(res);
-        console.log("-----------------------");
+        console.log("----------------------------------------------");
         mainAction();
     })
 };
@@ -222,7 +222,7 @@ function addDepartment() {
             function (err, res) {
                 if (err) throw err;
                 console.log(answer.name + " Department added");
-                console.log("-----------------------");
+                console.log("----------------------------------------------");
                 mainAction();
             });
     });
@@ -263,7 +263,7 @@ function addRole() {
                         function (err1, res1) {
                             if (err1) throw err1;
                             console.log("the role of " + answers.title + " with a salary of " + answers.salary + " added to the " + answers.department + " Department");
-                            console.log("-----------------------");
+                            console.log("----------------------------------------------");
                             mainAction();
                         });
                 });
@@ -314,7 +314,7 @@ function addEmployee() {
                         VALUES ("${answers.firstName}", "${answers.lastName}", ${roleId[0].id}, ${managerId[0].id})`, function(err, res) {
                             if (err) throw err;
                             console.log(answers.firstName + " " + answers.lastName + " officially works at this company");
-                            console.log("-----------------------");
+                            console.log("----------------------------------------------");
                             mainAction();
                         });
                     });
@@ -352,7 +352,7 @@ function updateEmployeeRole() {
                     connection.query("UPDATE employee SET ? WHERE ? AND ?", [{role_id:res[0].id}, {first_name:firstName}, {last_name:lastName}], function(err, res) {
                         if (err) throw err;
                         console.log(answers.name + "'s record successfully updated");
-                        console.log("-----------------------");
+                        console.log("----------------------------------------------");
                         mainAction();
                     });
                 });
@@ -391,7 +391,7 @@ function updateEmployeeManager() {
                     connection.query("UPDATE employee SET ? WHERE ? AND ?", [{manager_id:res[0].id}, {first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
                         if (err) throw err;
                         console.log(employeeFirstName + " " + employeeLastName + "'s record has been updated");
-                        console.log("-----------------------");
+                        console.log("----------------------------------------------");
                         mainAction();
                     });
                 });
@@ -427,7 +427,7 @@ function viewEmployeesByManager() {
         ]).then(function(answers) {
             viewRelation.managersSubordinates(answers.manager, function(result) {
                 console.table(result);
-                console.log("-----------------------");
+                console.log("----------------------------------------------");
                 mainAction();
             });
         });
@@ -450,7 +450,7 @@ function deleteDepartment() {
             connection.query("DELETE FROM department WHERE ?", {name:answers.departmentName}, function(err, res) {
                 if (err) throw err;
                 console.log("the " + answers.departmentName + " Department has been removed");
-                console.log("-----------------------");
+                console.log("----------------------------------------------");
                 mainAction();
             });
         });
@@ -473,7 +473,7 @@ function deleteRole() {
             connection.query("DELETE FROM role WHERE ?", {title:answers.roleTitle}, function(err, res) {
                 if (err) throw err;
                 console.log("the role of " + answers.roleTitle + " no longer exists at this company");
-                console.log("-----------------------");
+                console.log("----------------------------------------------");
                 mainAction();
             })
         })
@@ -498,7 +498,7 @@ function deleteEmployee() {
             connection.query("DELETE FROM employee WHERE ? AND ?", [{first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
                 if (err) throw err;
                 console.log(employeeFirstName + " " + employeeLastName + " has been removed");
-                console.log("-----------------------");
+                console.log("----------------------------------------------");
                 mainAction();
             });
         });
@@ -524,7 +524,7 @@ function viewDepartmentBudget() {
             WHERE employee.role_id = role.id AND role.department_id = department.id AND department.name = ?`, answers.depName, function(err, res) {
                 if (err) throw err;
                 console.table(res);
-                console.log("-----------------------");
+                console.log("----------------------------------------------");
                 mainAction();
             });
         });

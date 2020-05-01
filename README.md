@@ -45,7 +45,7 @@ npm install
 
 * *note:* This application requires the user to have [MySQL](https://dev.mysql.com/downloads/windows/installer/8.0.html) and [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) installed on their local device. In addition, the user must also enter their root password in the appropriate field of the `server.js` file.
 
-__step 3:__ enter your MySQL password on Line15 of the `server.js` file
+__step 3:__ enter your MySQL password on Line15 of the `app.js` file
 
 ![location of MySQL password](/assets/password-location.png)
 
@@ -54,7 +54,7 @@ __step 3:__ enter your MySQL password on Line15 of the `server.js` file
 ## Usage:
 __step 1:__ open the application in the terminal/git bash and invoke it with the following command:
 ```
-node server.js
+node app.js
 ```
 
 __step 2:__ use the application to do whatever you want!
@@ -62,7 +62,7 @@ __step 2:__ use the application to do whatever you want!
 ---
 
 ## Demonstration:
-A demonstration of this application's functionality can be viewed at __[this link](https://drive.google.com/file/d/1IvliMqTJM7qCmZuFWN6Oqi89AtlfKmb6/view?usp=sharing)__.
+A demonstration of this application's functionality can be viewed at __[this link]()__.
 
 ---
 
