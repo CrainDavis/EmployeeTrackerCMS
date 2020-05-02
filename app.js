@@ -87,7 +87,7 @@ function mainAction() {
 
 var getFunctions = {
     getDepartments: function (arr) {
-        connection.query("SELECT name FROM department", function (err, res) {
+        connection.query("SELECT name FROM department;", function (err, res) {
             var departmentsArray = [];
             if (err) throw err;
             for (var i = 0; i < res.length; i++) {
@@ -99,7 +99,7 @@ var getFunctions = {
     },
 
     getRoles: function (arr) {
-        connection.query("SELECT title FROM role", function (err, res) {
+        connection.query("SELECT title FROM role;", function (err, res) {
             var rolesArray = [];
             if (err) throw err;
             for (var i = 0; i < res.length; i++) {
@@ -111,7 +111,7 @@ var getFunctions = {
     },
 
     getEmployees: function (arr) {
-        connection.query(`SELECT CONCAT (employee.first_name, ' ', employee.last_name) AS full_name FROM employee`, function (err, res) {
+        connection.query(`SELECT CONCAT (employee.first_name, ' ', employee.last_name) AS full_name FROM employee;`, function (err, res) {
             var employeesArray = [];
             if (err) throw err;
             for (var i = 0; i < res.length; i++) {
@@ -132,7 +132,7 @@ var getFunctions = {
         (role.title = "Chief of Retail") OR (role.title = "Head of Employment") OR 
         (role.title = "Distribution Director") OR (role.title = "Head of Production") OR 
         (role.title = "Store Director")
-        ORDER BY employee.id ASC`, function (err, res) {
+        ORDER BY employee.id ASC;`, function (err, res) {
             var managerNamesArray = [];
             if (err) throw err;
             for (var i = 0; i < res.length; i++) {
@@ -165,7 +165,7 @@ function validateNumber(number) {
 // =======================================================================================
 
 function viewAllDepartments() {
-    connection.query(`SELECT * FROM department`, function (err, res) {
+    connection.query(`SELECT * FROM department;`, function (err, res) {
         if (err) throw err;
         console.table(res);
         console.log("----------------------------------------------");
@@ -179,7 +179,7 @@ function viewAllRoles() {
     connection.query(`
     SELECT role.id, role.title, role.salary, department.name
     FROM role
-    INNER JOIN department ON role.department_id = department.id`, function (err, res) {
+    INNER JOIN department ON role.department_id = department.id;`, function (err, res) {
         if (err) throw err;
         console.table(res);
         console.log("----------------------------------------------");
@@ -215,7 +215,7 @@ function addDepartment() {
             validate: validateInput
         }
     ]).then(function (answer) {
-        connection.query("INSERT INTO department SET ?",
+        connection.query("INSERT INTO department SET ?;",
             {
                 name: answer.name
             },
@@ -259,7 +259,7 @@ function addRole() {
                     if (err) throw err;
                     connection.query(`
                     INSERT INTO role (title, salary, department_id) 
-                    VALUES ("${answers.title}", "${answers.salary}", "${department[0].id}")`,
+                    VALUES ("${answers.title}", "${answers.salary}", "${department[0].id}");`,
                         function (err1, res1) {
                             if (err1) throw err1;
                             console.log("the role of " + answers.title + " with a salary of $" + answers.salary + " has been added to the " + answers.department + " Department");
@@ -311,7 +311,7 @@ function addEmployee() {
                     connection.query("SELECT id FROM employee WHERE ? AND ?", [{ first_name: managerFirstName }, { last_name: managerLastName }], function(err, managerId) {
                         if (err) throw err;
                         connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) 
-                        VALUES ("${answers.firstName}", "${answers.lastName}", ${roleId[0].id}, ${managerId[0].id})`, function(err, res) {
+                        VALUES ("${answers.firstName}", "${answers.lastName}", ${roleId[0].id}, ${managerId[0].id});`, function(err, res) {
                             if (err) throw err;
                             console.log(answers.firstName + " " + answers.lastName + " officially works as a(n) " + answers.role);
                             console.log("----------------------------------------------");
@@ -349,7 +349,7 @@ function updateEmployeeRole() {
                 var lastName = answers.name.split(' ').slice(-1).join(' ');
                 connection.query("SELECT id FROM role WHERE ?", {title:answers.title}, function(err, res) {
                     if (err) throw err;
-                    connection.query("UPDATE employee SET ? WHERE ? AND ?", [{role_id:res[0].id}, {first_name:firstName}, {last_name:lastName}], function(err, res) {
+                    connection.query("UPDATE employee SET ? WHERE ? AND ?;", [{role_id:res[0].id}, {first_name:firstName}, {last_name:lastName}], function(err, res) {
                         if (err) throw err;
                         console.log(answers.name + "'s role successfully updated to " + answers.title);
                         console.log("----------------------------------------------");
@@ -386,9 +386,9 @@ function updateEmployeeManager() {
                 var managerLastName = answers.manager.split(' ').slice(-1).join(' ');
                 var employeeFirstName = answers.employee.split(' ').slice(0, -1).join(' ');
                 var employeeLastName = answers.employee.split(' ').slice(-1).join(' ');
-                connection.query("SELECT id FROM employee WHERE ? AND ?", [{first_name:managerFirstName}, {last_name:managerLastName}], function(err, res) {
+                connection.query("SELECT id FROM employee WHERE ? AND ?;", [{first_name:managerFirstName}, {last_name:managerLastName}], function(err, res) {
                     if (err) throw err;
-                    connection.query("UPDATE employee SET ? WHERE ? AND ?", [{manager_id:res[0].id}, {first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
+                    connection.query("UPDATE employee SET ? WHERE ? AND ?;", [{manager_id:res[0].id}, {first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
                         if (err) throw err;
                         console.log(answers.employee + "'s manager has been updated to " + answers.manager);
                         console.log("----------------------------------------------");
@@ -406,8 +406,8 @@ var viewRelation = {
     managersSubordinates: function(manager_name, arr) {
         connection.query(`
         SELECT CONCAT(first_name, ' ', last_name) AS subordinates 
-        FROM employee WHERE manager_id 
-        IN (SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?)`, manager_name, function(err, res) {
+        FROM employee 
+        WHERE manager_id IN (SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?);`, manager_name, function(err, res) {
             if (err) throw err;
             arr(res);
         });
@@ -448,7 +448,7 @@ function deleteDepartment() {
                 choices: departmentsList
             }
         ]).then(function(answers) {
-            connection.query("DELETE FROM department WHERE ?", {name:answers.departmentName}, function(err, res) {
+            connection.query("DELETE FROM department WHERE ?;", {name:answers.departmentName}, function(err, res) {
                 if (err) throw err;
                 console.log("the " + answers.departmentName + " Department has been removed");
                 console.log("----------------------------------------------");
@@ -471,7 +471,7 @@ function deleteRole() {
                 choices: rolesList
             }
         ]).then(function(answers) {
-            connection.query("DELETE FROM role WHERE ?", {title:answers.roleTitle}, function(err, res) {
+            connection.query("DELETE FROM role WHERE ?;", {title:answers.roleTitle}, function(err, res) {
                 if (err) throw err;
                 console.log("the role of " + answers.roleTitle + " has been removed");
                 console.log("----------------------------------------------");
@@ -496,7 +496,7 @@ function deleteEmployee() {
         ]).then(function(answers) {
             var employeeFirstName = answers.employeeName.split(' ').slice(0, -1).join(' ');
             var employeeLastName = answers.employeeName.split(' ').slice(-1).join(' ');
-            connection.query("DELETE FROM employee WHERE ? AND ?", [{first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
+            connection.query("DELETE FROM employee WHERE ? AND ?;", [{first_name:employeeFirstName}, {last_name:employeeLastName}], function(err, res) {
                 if (err) throw err;
                 console.log(answers.employeeName + " has been removed");
                 console.log("----------------------------------------------");
@@ -522,7 +522,7 @@ function viewDepartmentBudget() {
             connection.query(`
             SELECT name, SUM(salary) AS 'utilized_budget'
             FROM employee, role, department
-            WHERE employee.role_id = role.id AND role.department_id = department.id AND department.name = ?`, answers.depName, function(err, res) {
+            WHERE employee.role_id = role.id AND role.department_id = department.id AND department.name = ?;`, answers.depName, function(err, res) {
                 if (err) throw err;
                 console.table(res);
                 console.log("----------------------------------------------");

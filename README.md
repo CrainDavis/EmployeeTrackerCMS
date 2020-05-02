@@ -28,6 +28,7 @@ This Employee Tracking Content Management System (CMS) can be used to do the fol
 * [Contributing](#contributing)
 * [Resources](#resources)
 * [Tests](#tests)
+* [Future Updates](#future-updates)
 * [Questions](#questions)
 
 ---
@@ -205,6 +206,14 @@ https://www.contributor-covenant.org/translations.
 ---
 
 ## Tests:
+
+---
+
+## Future Updates:
+some functions that would be improve the application:
+* create a __"View Employees by Department"__ function
+* create a __"View Employees by Role"__ function
+* in the existing __"View All Employees Under a Manager"__ function, add each employee's role (title) and department (name) information
 
 ---
 
