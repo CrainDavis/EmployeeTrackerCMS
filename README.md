@@ -213,7 +213,8 @@ https://www.contributor-covenant.org/translations.
 some functions that would be improve the application:
 * create a __"View Employees by Department"__ function
 * create a __"View Employees by Role"__ function
-* in the existing __"View All Employees Under a Manager"__ function, add each employee's role (title) and department (name) information
+* in the existing __"View Employees By Manager"__ function, add each employee's role (title) and department (name) information to the console table
+* in the existing __"View All Roles"__ function, display which department each role is under
 
 ---
 
