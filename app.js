@@ -405,8 +405,10 @@ function updateEmployeeManager() {
 var viewRelation = {
     managersSubordinates: function(manager_name, arr) {
         connection.query(`
-        SELECT CONCAT(first_name, ' ', last_name) AS subordinates 
+        SELECT employee.id, CONCAT(first_name, ' ', last_name) AS full_name, role.title, department.name AS department, role.salary
         FROM employee 
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
         WHERE manager_id IN (SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?);`, manager_name, function(err, res) {
             if (err) throw err;
             arr(res);
