@@ -12,10 +12,10 @@ This is a Command Line Interface (CLI) application that allows the user to searc
 This Employee Tracking Content Management System (CMS) can be used to do the following:
   * add departments, roles, or employees
   * view departments, roles, or employees
+    * in addition to being able to view all employees, employees can also be viewed by their department, role, or manager
   * delete a department, role, or employee
   * update an employee's role
   * update an employee's manager
-  * view all employees under a particular manager
   * view the total utilized budget of a department
 
 ---
