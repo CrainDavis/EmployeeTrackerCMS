@@ -63,7 +63,7 @@ __step 2:__ use the application to do whatever you want!
 ---
 
 ## Demonstration:
-A demonstration of this application's functionality can be viewed at __[this link](https://drive.google.com/file/d/1XqLBfxrCKRj8nGNG5vAWiW8Qc8IHx-lj/view)__.
+A demonstration of this application's functionality can be viewed at __[this link](https://drive.google.com/file/d/1bD4qXIVdXv965NU7EEzR_n3Ig_m-BVQI/view?usp=sharing)__.
 
 ---
 
