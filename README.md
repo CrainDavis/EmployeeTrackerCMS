@@ -211,8 +211,7 @@ https://www.contributor-covenant.org/translations.
 
 ## Future Updates:
 some functions that would improve this application:
-* create a __"View Employees by Department"__ function
-* create a __"View Employees by Role"__ function
+* update __"View Employees by Department"__ & __"View Employees by Role"__ functions to include name of each employee's manager in the table
 
 ---
 

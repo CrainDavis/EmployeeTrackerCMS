@@ -35,12 +35,14 @@ function mainAction() {
                 "View All Departments",
                 "View All Roles",
                 "View All Employees",
+                "View All Employees by Department",
+                "View All Employees by Role",
+                "View Employees by Manager",
                 "Add Department",
                 "Add Role",
                 "Add Employee",
                 "Update Employee Role",
                 "Update Employee Manager",
-                "View Employees by Manager",
                 "Delete Department",
                 "Delete Role",
                 "Delete Employee",
@@ -55,6 +57,12 @@ function mainAction() {
             viewAllRoles();
         } else if (answer.action === "View All Employees") {
             viewAllEmployees();
+        } else if (answer.action === "View All Employees by Department") {
+            viewAllEmployeesByDepartment();
+        } else if (answer.action === "View All Employees by Role") {
+            viewAllEmployeesByRole();
+        } else if (answer.action === "View Employees by Manager") {
+            viewEmployeesByManager();
         } else if (answer.action === "Add Department") {
             addDepartment();
         } else if (answer.action === "Add Role") {
@@ -65,8 +73,6 @@ function mainAction() {
             updateEmployeeRole();
         } else if (answer.action === "Update Employee Manager") {
             updateEmployeeManager();
-        } else if (answer.action === "View Employees by Manager") {
-            viewEmployeesByManager();
         } else if (answer.action === "Delete Department") {
             deleteDepartment();
         } else if (answer.action === "Delete Role") {
@@ -145,6 +151,45 @@ var getFunctions = {
 };
 
 // =======================================================================================
+// VIEW RELATION BETWEEN TWO TABLES (employees, managers, departments, roles)
+// =======================================================================================
+
+var viewRelation = {
+    managersSubordinates: function(manager_name, cb) {
+        connection.query(`
+        SELECT employee.id, CONCAT(first_name, ' ', last_name) AS full_name, role.title, department.name AS department, role.salary
+        FROM employee 
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
+        WHERE manager_id IN (SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?);`, manager_name, function(err, res) {
+            if (err) throw err;
+            cb(res);
+        });
+    },
+
+    employeesByDepartment: function(dep_name, cb) {
+        connection.query(`SELECT employee.id, CONCAT(employee.first_name, ' ', employee.last_name) AS full_name, role.title, role.salary
+        FROM department
+        LEFT JOIN role ON role.department_id = department.id
+        LEFT JOIN employee ON employee.role_id = role.id
+        WHERE name = ?;`, dep_name, function(err, res) {
+            if (err) throw err;
+            cb(res);
+        });
+    },
+
+    employeesByRole: function(role_title, cb) {
+        connection.query(`SELECT employee.id, CONCAT(employee.first_name, ' ', employee.last_name) AS full_name
+        FROM role
+        LEFT JOIN employee ON employee.role_id = role.id
+        WHERE title = ?;`, role_title, function(err, res) {
+            if (err) throw err;
+            cb(res);
+        });
+    }
+};
+
+// =======================================================================================
 // VALIDATE USER INPUT (for appropriate string length or use of numbers)
 // =======================================================================================
 
@@ -191,8 +236,7 @@ function viewAllRoles() {
 
 function viewAllEmployees() {
     connection.query(`
-    SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary,
-    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
     FROM employee AS manager
     RIGHT JOIN employee ON manager.id = employee.manager_id
     LEFT JOIN role ON employee.role_id = role.id
@@ -202,6 +246,75 @@ function viewAllEmployees() {
         console.log("----------------------------------------------");
         mainAction();
     })
+};
+
+// ---------------------------------------------------------------------------------------
+
+function viewAllEmployeesByDepartment() {
+    getFunctions.getDepartments(function(result) {
+        var departmentNames = result;
+        inquirer.prompt([
+            {
+                name: "depChoice",
+                type: "list",
+                message: "select DEPARTMENT to view all employees",
+                choices: departmentNames
+            }
+        ]).then(function(answers) {
+            viewRelation.employeesByDepartment(answers.depChoice, function(result) {
+                console.log("all employees in the " + answers.depChoice + " Department:\n");
+                console.table(result);
+                console.log("----------------------------------------------");
+                mainAction();
+            });
+        });
+    });
+};
+
+// ---------------------------------------------------------------------------------------
+
+function viewAllEmployeesByRole() {
+    getFunctions.getRoles(function(result) {
+        var roleNames = result;
+        inquirer.prompt([
+            {
+                name: "roleName",
+                type: "list",
+                message: "select the ROLE to view all employees",
+                choices: roleNames
+            }
+        ]).then(function(answers) {
+            viewRelation.employeesByRole(answers.roleName, function(result) {
+                console.log("all employees working as a(n) " + answers.roleName + ":\n");
+                console.table(result);
+                console.log("----------------------------------------------");
+                mainAction();
+            });
+        });
+    });
+};
+
+// ---------------------------------------------------------------------------------------
+
+function viewEmployeesByManager() {
+    getFunctions.getManagers(function(result) {
+        var managersList = result;
+        inquirer.prompt([
+            {
+                name: "manager",
+                type: "list",
+                message: "select a MANAGER to view employees working under them",
+                choices: managersList
+            }
+        ]).then(function(answers) {
+            viewRelation.managersSubordinates(answers.manager, function(result) {
+                console.log("all employees working under " + answers.manager + ":\n");
+                console.table(result);
+                console.log("----------------------------------------------");
+                mainAction();
+            });
+        });
+    });
 };
 
 // ---------------------------------------------------------------------------------------
@@ -400,44 +513,7 @@ function updateEmployeeManager() {
     });
 };
 
-// ---------------------------------------------------------------------------------------
-
-var viewRelation = {
-    managersSubordinates: function(manager_name, arr) {
-        connection.query(`
-        SELECT employee.id, CONCAT(first_name, ' ', last_name) AS full_name, role.title, department.name AS department, role.salary
-        FROM employee 
-        LEFT JOIN role ON employee.role_id = role.id
-        LEFT JOIN department ON role.department_id = department.id
-        WHERE manager_id IN (SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?);`, manager_name, function(err, res) {
-            if (err) throw err;
-            arr(res);
-        });
-    }
-}; 
-
-function viewEmployeesByManager() {
-    getFunctions.getManagers(function(result) {
-        var managersList = result;
-        inquirer.prompt([
-            {
-                name: "manager",
-                type: "list",
-                message: "select a MANAGER to view employees working under them",
-                choices: managersList
-            }
-        ]).then(function(answers) {
-            viewRelation.managersSubordinates(answers.manager, function(result) {
-                console.log("all employees working under " + answers.manager + ":\n");
-                console.table(result);
-                console.log("----------------------------------------------");
-                mainAction();
-            });
-        });
-    });
-};
-
-// ---------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------- 
 
 function deleteDepartment() {
     getFunctions.getDepartments(function(result) {
