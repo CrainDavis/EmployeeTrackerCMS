@@ -27,7 +27,6 @@ This Employee Tracking Content Management System (CMS) can be used to do the fol
 * [License](#license)
 * [Contributing](#contributing)
 * [Resources](#resources)
-* [Tests](#tests)
 * [Future Updates](#future-updates)
 * [Questions](#questions)
 
@@ -202,10 +201,6 @@ https://www.contributor-covenant.org/translations.
     * [MySQL Joins](https://www.w3schools.com/sql/sql_join.asp)
     * [inquirer validation](https://github.com/sameeri/Code-Inquirer/wiki/Asking-questions-away-with-Inquirer!)
 * [Random Name Generator](http://random-name-generator.info/index.php?n=50&g=1&st=2)
-
----
-
-## Tests:
 
 ---
 
